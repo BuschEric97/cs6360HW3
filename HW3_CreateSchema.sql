@@ -1,5 +1,5 @@
-/*PART 1*/
-
+/**PART 1**/
+/*CREATE TABLES*/
 DROP TABLE if exists book;
 CREATE TABLE book (
     book_id         integer,
@@ -59,9 +59,7 @@ CREATE TABLE borrower (
     primary key (card_no)
 );
 
-
-/*PART 2*/
-
+/*CONSTRAINTS*/
 ALTER TABLE book ADD CONSTRAINT fkpub FOREIGN KEY(publisher_name) REFERENCES publisher(publisher_name);
 ALTER TABLE book_authors ADD CONSTRAINT fkbid FOREIGN KEY(book_id) REFERENCES book(book_id);
 ALTER TABLE book_copies ADD CONSTRAINT fkcpid FOREIGN KEY(book_id) REFERENCES book(book_id);
@@ -69,3 +67,34 @@ ALTER TABLE book_copies ADD CONSTRAINT fkcpbrid FOREIGN KEY(branch_id) REFERENCE
 ALTER TABLE book_loans ADD CONSTRAINT fklnbid FOREIGN KEY(book_id) REFERENCES book(book_id);
 ALTER TABLE book_loans ADD CONSTRAINT fklnbrid FOREIGN KEY(branch_id) REFERENCES library_branch(branch_id);
 ALTER TABLE book_loans ADD CONSTRAINT fkcno FOREIGN KEY(card_no) REFERENCES borrower(card_no);
+
+
+/**PART 2**/
+SELECT dname, COUNT (ssn)
+FROM (department NATURAL JOIN employee)
+GROUP BY dname
+HAVING AVG (salary) > 30000;
+
+SELECT dname, COUNT (ssn)
+FROM (department NATURAL JOIN employee)
+WHERE gender = 'M'
+GROUP BY dname
+HAVING AVG (salary) > 30000;
+
+SELECT fname, lname
+FROM employee
+WHERE dno IN (SELECT dno
+              FROM (department NATURAL JOIN employee)
+              GROUP BY dno, salary
+              HAVING salary = MAX (salary));
+              
+SELECT fname, lname
+FROM employee
+GROUP BY fname, lname, salary
+HAVING salary >= (MIN (salary)+ 10000);
+
+SELECT fname, lname
+FROM employee E, dependent D, department P
+WHERE E.dno = P.dno AND D.essn = E.ssn
+GROUP BY E.fname, E.lname, E.salary
+HAVING E.salary = MIN (E.salary);
